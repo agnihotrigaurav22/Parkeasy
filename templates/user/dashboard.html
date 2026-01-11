@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - Parking Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-speedometer2 me-2"></i>My Dashboard</h1>
+        <div class="text-muted">Welcome, {{ session.username }}!</div>
+    </div>
+
+    <!-- Active Reservation Alert -->
+    {% if active_reservation %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-car-front me-2"></i>
+        <strong>Active Parking:</strong> You have an active reservation at {{ active_reservation.prime_location_name }},
+        Spot {{ active_reservation.spot_number }}. Rate: ${{ "%.2f"|format(active_reservation.price_per_hour) }}/hour.
+        <div class="mt-2">
+            <a href="{{ url_for('user_release_spot', spot_id=active_reservation.spot_id) }}"
+                class="btn btn-warning btn-sm"
+                onclick="return confirm('Are you sure you want to release this parking spot?')">
+                <i class="bi bi-box-arrow-right me-1"></i>Release Spot
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-card glass-card h-100 position-relative overflow-hidden group-hover-effect" data-tilt>
+                <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                    <i class="bi bi-clock-history display-1 text-primary"></i>
+                </div>
+                <div class="stat-content p-2 position-relative z-1">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-clock-history fs-3 text-primary"></i>
+                        </div>
+                        <h6 class="mb-0 text-muted text-uppercase fw-bold">Total Reservations</h6>
+                    </div>
+                    <div class="d-flex align-items-end">
+                        <h2 class="display-4 fw-bold mb-0 text-primary" id="totalReservations">{{ reservations|length }}
+                        </h2>
+                        <span
+                            class="ms-2 mb-2 badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill fw-medium">Lifetime</span>
+                    </div>
+                    <p class="text-muted mt-3 mb-0 small">Your parking activity</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-card glass-card h-100 position-relative overflow-hidden group-hover-effect" data-tilt>
+                <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                    <i class="bi bi-wallet2 display-1 text-success"></i>
+                </div>
+                <div class="stat-content p-2 position-relative z-1">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-currency-dollar fs-3 text-success"></i>
+                        </div>
+                        <h6 class="mb-0 text-muted text-uppercase fw-bold">Total Spent</h6>
+                    </div>
+                    <div class="d-flex align-items-end">
+                        <h2 class="display-4 fw-bold mb-0 text-success" id="totalSpent">${{
+                            "%.2f"|format(reservations|sum(attribute='parking_cost') or 0) }}</h2>
+                        <span
+                            class="ms-2 mb-2 badge bg-success bg-opacity-10 text-success px-3 rounded-pill fw-medium">Paid</span>
+                    </div>
+                    <p class="text-muted mt-3 mb-0 small">Cumulative parking fees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-card glass-card h-100 position-relative overflow-hidden group-hover-effect" data-tilt>
+                <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                    <i class="bi bi-car-front display-1 text-info"></i>
+                </div>
+                <div class="stat-content p-2 position-relative z-1">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="icon-box bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-car-front fs-3 text-info"></i>
+                        </div>
+                        <h6 class="mb-0 text-muted text-uppercase fw-bold">Active Parking</h6>
+                    </div>
+                    <div class="d-flex align-items-end">
+                        <h2 class="display-4 fw-bold mb-0 text-info">{{ '1' if active_reservation else '0' }}</h2>
+                        <span
+                            class="ms-2 mb-2 badge bg-info bg-opacity-10 text-info px-3 rounded-pill fw-medium">Current</span>
+                    </div>
+                    <p class="text-muted mt-3 mb-0 small">Spots currently engaged</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Parking Lots -->
+    <div class="card mb-5 border-0 shadow-lg" data-aos="fade-up">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-geo-alt me-2 text-primary"></i>Available Parking Lots</h5>
+        </div>
+        <div class="card-body p-4">
+            {% if active_reservation %}
+            <div class="alert alert-warning gradient-border mb-4">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-warning"></i>
+                    <div>
+                        <strong>Active Reservation Found!</strong><br>
+                        You already have an active parking reservation. Please release your current spot before booking
+                        a new one.
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row g-4">
+                {% for lot in lots %}
+                <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="{{ 100 * loop.index }}">
+                    <div class="parking-lot-card glass-card h-100 position-relative group-hover-effect" data-tilt
+                        data-tilt-max="5" data-tilt-scale="1.02">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title text-primary fw-bold mb-0">
+                                    <i class="bi bi-p-circle-fill me-2"></i>{{ lot.prime_location_name }}
+                                </h5>
+                                <span
+                                    class="badge bg-primary bg-opacity-10 text-primary fs-6 border border-primary border-opacity-25">
+                                    ${{ "%.2f"|format(lot.price_per_hour) }}<small class="text-muted ms-1">/hr</small>
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted mb-4 small">
+                                <i class="bi bi-geo-alt-fill me-1 text-danger"></i> {{ lot.address }}, {{ lot.pin_code
+                                }}
+                            </p>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-4 text-center border-end">
+                                    <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">
+                                        Capacity</div>
+                                    <div class="fw-bold fs-5">{{ lot.total_spots or 0 }}</div>
+                                </div>
+                                <div class="col-4 text-center border-end">
+                                    <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">
+                                        Available</div>
+                                    <div class="fw-bold fs-5 text-success">{{ lot.available_spots or 0 }}</div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div class="small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">
+                                        Occupied</div>
+                                    <div class="fw-bold fs-5 text-warning">{{ lot.occupied_spots or 0 }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Availability Progress Bar -->
+                            <div class="mb-4">
+                                {% set occupancy_percent = ((lot.occupied_spots or 0) / (lot.total_spots or 1) * 100) %}
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Occupancy</span>
+                                    <span>{{ "%.0f"|format(occupancy_percent) }}%</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-gradient-warning" role="progressbar"
+                                        style="width: {{ occupancy_percent }}%"></div>
+                                </div>
+                            </div>
+
+                            {% if not active_reservation and (lot.available_spots or 0) > 0 %}
+                            <a href="{{ url_for('user_book_spot', lot_id=lot.id) }}"
+                                class="btn btn-primary w-100 btn-modern shadow-sm"
+                                onclick="return confirm('Book a parking spot at {{ lot.prime_location_name }}?')">
+                                <i class="bi bi-check-lg me-2"></i>Book This Spot
+                            </a>
+                            {% elif not active_reservation %}
+                            <button class="btn btn-secondary w-100 opacity-75" disabled>
+                                <i class="bi bi-x-circle me-2"></i>Full
+                            </button>
+                            {% else %}
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                <i class="bi bi-lock me-2"></i>Booking Restricted
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Parking History -->
+    <div class="card border-0 shadow-lg" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-header bg-transparent border-0 pt-4 px-4">
+            <h5 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-primary"></i>Parking History</h5>
+        </div>
+        <div class="card-body">
+            {% if reservations %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Spot</th>
+                            <th>Parked At</th>
+                            <th>Left At</th>
+                            <th>Duration</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ reservation.prime_location_name }}</div>
+                                <small class="text-muted">{{ reservation.address }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">{{ reservation.spot_number }}</span>
+                            </td>
+                            <td>{{ reservation.parking_timestamp }}</td>
+                            <td>{{ reservation.leaving_timestamp or '-' }}</td>
+                            <td>
+                                {% if reservation.leaving_timestamp %}
+                                <!-- Calculate duration -->
+                                {% set duration = 'Completed' %}
+                                {{ duration }}
+                                {% else %}
+                                <span class="text-primary">Ongoing</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reservation.parking_cost %}
+                                <span class="fw-bold">${{ "%.2f"|format(reservation.parking_cost) }}</span>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reservation.status == 'active' %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Completed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-car-front display-4 text-muted"></i>
+                <h5 class="mt-3 text-muted">No Parking History</h5>
+                <p class="text-muted">Book your first parking spot to see your history here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

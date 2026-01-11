@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section bg-gradient text-white text-center py-5 mb-5" data-aos="fade-down">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4" data-aos="zoom-in" data-aos-delay="200">
+                    <i class="bi bi-car-front me-3"></i>Welcome to ParkEasy
+                </h1>
+                <p class="lead mb-4" data-aos="fade-up" data-aos-delay="400">Your comprehensive parking management
+                    solution for seamless spot booking and lot management</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="600">
+                    <a href="{{ url_for('login') }}" class="btn btn-lg px-4 btn-auth-light">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                    <a href="{{ url_for('register') }}" class="btn btn-lg px-4 btn-auth-light">
+                        <i class="bi bi-person-plus me-2"></i>Register
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+        <div class="row g-4">
+            <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                <div class="feature-card glass-card h-100 position-relative group-hover-effect" data-tilt
+                    data-tilt-max="5" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="card-body text-center p-5">
+                        <div
+                            class="feature-icon mb-4 icon-box bg-primary bg-opacity-10 p-4 rounded-circle d-inline-block mx-auto">
+                            <i class="bi bi-person-badge display-4 text-primary"></i>
+                        </div>
+                        <h3 class="card-title fw-bold mb-3">For Users</h3>
+                        <p class="card-text text-muted mb-4">Book parking spots instantly with automatic allocation.
+                            Track your parking history.</p>
+                        <ul class="list-unstyled text-start d-inline-block">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Quick spot
+                                reservation</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Real-time
+                                availability</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Cost tracking</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>History management
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="position-absolute bottom-0 start-0 w-100 h-1 bg-gradient-primary"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6" data-aos="fade-left" data-aos-delay="400">
+                <div class="feature-card glass-card h-100 position-relative group-hover-effect" data-tilt
+                    data-tilt-max="5" data-tilt-glare data-tilt-max-glare="0.5">
+                    <div class="card-body text-center p-5">
+                        <div
+                            class="feature-icon mb-4 icon-box bg-success bg-opacity-10 p-4 rounded-circle d-inline-block mx-auto">
+                            <i class="bi bi-gear-fill display-4 text-success"></i>
+                        </div>
+                        <h3 class="card-title fw-bold mb-3">For Administrators</h3>
+                        <p class="card-text text-muted mb-4">Comprehensive parking lot management with real-time
+                            monitoring and analytics.</p>
+                        <ul class="list-unstyled text-start d-inline-block">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Lot creation &
+                                management</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Real-time
+                                monitoring</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Analytics
+                                dashboard</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>User management
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="position-absolute bottom-0 start-0 w-100 h-1 bg-gradient-success"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="info-section glass-card text-center p-5 position-relative overflow-hidden" data-aos="fade-up">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-light opacity-50 z-0"></div>
+                <h2 class="mb-5 fw-bold position-relative z-1">How It Works</h2>
+                <div class="row g-4 position-relative z-1">
+                    <div class="col-md-4">
+                        <div class="step-card h-100 p-4 rounded-4 hover-lift" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="step-number bg-gradient-primary shadow-lg mb-4 mx-auto d-flex align-items-center justify-content-center"
+                                style="width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem;">1</div>
+                            <h5 class="fw-bold mb-3">Register or Login</h5>
+                            <p class="text-muted">Create your account or login to access the parking system.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="step-card h-100 p-4 rounded-4 hover-lift" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="step-number bg-gradient-success shadow-lg mb-4 mx-auto d-flex align-items-center justify-content-center"
+                                style="width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem;">2</div>
+                            <h5 class="fw-bold mb-3">Choose Location</h5>
+                            <p class="text-muted">Browse available parking lots and select your preferred location.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="step-card h-100 p-4 rounded-4 hover-lift" data-aos="zoom-in" data-aos-delay="500">
+                            <div class="step-number bg-gradient-warning shadow-lg mb-4 mx-auto d-flex align-items-center justify-content-center"
+                                style="width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem;">3</div>
+                            <h5 class="fw-bold mb-3">Park & Pay</h5>
+                            <p class="text-muted">Get your spot automatically assigned and pay based on duration.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
